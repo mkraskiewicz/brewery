@@ -2,6 +2,9 @@ package com.mkraskiewicz.brewery.web.controller.v2;
 
 import com.mkraskiewicz.brewery.web.model.v2.BeerDTOV2;
 import com.mkraskiewicz.brewery.web.service.v2.BeerServiceV2;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,26 +22,26 @@ import java.util.UUID;
  */
 @Validated
 @RestController
+@Slf4j
+@RequiredArgsConstructor
 @RequestMapping("/api/v2/beer")
 public class BeerControllerV2 {
 
-    private final BeerServiceV2 beerService;
-
-    public BeerControllerV2(BeerServiceV2 beerService) {
-        this.beerService = beerService;
-    }
+    private final BeerServiceV2 beerServiceV2;
 
     @GetMapping({"/{beerId}"})
     public ResponseEntity<BeerDTOV2> getBeer(@PathVariable("beerId") UUID beerId){
 
-        return new ResponseEntity<>(beerService.getBeerById(beerId), HttpStatus.OK);
+        return new ResponseEntity<>(beerServiceV2.getBeerById(beerId), HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity handlePost(@Valid @RequestBody BeerDTOV2 beerDto){
 
-        BeerDTOV2 savedDto = beerService.saveNewBeer(beerDto);
-        HttpHeaders headers = new HttpHeaders();
+        log.debug("in handle post...");
+
+        val savedDto = beerServiceV2.saveNewBeer(beerDto);
+        var headers = new HttpHeaders();
         //todo add hostname to url
         headers.add("Location", "/api/v1/beer/" + savedDto.getId().toString());
 
@@ -48,7 +51,7 @@ public class BeerControllerV2 {
     @PutMapping({"/{beerId}"})
     public ResponseEntity handleUpdate(@PathVariable("beerId") UUID beerId, @Valid @RequestBody BeerDTOV2 beerDto){
 
-        beerService.updateBeer(beerId, beerDto);
+        beerServiceV2.updateBeer(beerId, beerDto);
 
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
@@ -56,7 +59,7 @@ public class BeerControllerV2 {
     @DeleteMapping({"/{beerId}"})
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteBeer(@PathVariable("beerId") UUID beerId){
-        beerService.deleteById(beerId);
+        beerServiceV2.deleteById(beerId);
     }
 
 

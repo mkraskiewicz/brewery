@@ -30,7 +30,7 @@ public class BeerServiceV2Impl implements BeerServiceV2 {
     }
 
     @Override
-    public Object getBeerById(UUID beerID) {
+    public BeerDTOV2  getBeerById(UUID beerID) {
         return BeerDTOV2.builder().id(UUID.randomUUID())
                 .beerName("Galaxy Cat")
                 .beerStyle(BeerStyleEnum.ALE)
